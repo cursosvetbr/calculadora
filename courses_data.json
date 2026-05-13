@@ -1,0 +1,10 @@
+{
+  "course_value": 100.0,
+  "course_hours": 10.0,
+  "course_repasse": 25.0,
+  "professors": {
+    "Professor A": 270.0,
+    "Professor B": 330.0
+  }
+}
+

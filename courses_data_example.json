@@ -1,0 +1,21 @@
+{
+  "Curso Exemplo": {
+    "total_value": 25.0,
+    "total_hours": 10.0,
+    "professors": {
+      "Professor A": 20.0,
+      "Professor B": 10.0,
+      "Professor C": 70.0
+    }
+  },
+  "Python Básico": {
+    "total_value": 150.0,
+    "total_hours": 6.0,
+    "professors": {
+      "João Silva": 50.0,
+      "Maria Santos": 30.0,
+      "Carlos Oliveira": 20.0
+    }
+  }
+}
+
