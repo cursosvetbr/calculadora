@@ -55,6 +55,8 @@ class EditProfessorDialog(QDialog):
 
 
 class TeacherHourCalculator(QMainWindow):
+    COMMISSION_LIMIT_PERCENT = 25.0
+
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Calculadora de Valor Hora/Aula")
@@ -203,6 +205,14 @@ class TeacherHourCalculator(QMainWindow):
             return
         
         prof_percentage = self.prof_percentage_input.value()
+        candidate_professors = dict(self.professors)
+        candidate_professors[prof_name] = {"minutes": prof_minutes, "percentage": prof_percentage}
+        total_commission_percentage = self.calculate_total_commission_percentage(candidate_professors)
+
+        if total_commission_percentage > self.COMMISSION_LIMIT_PERCENT:
+            self.show_commission_limit_alert(total_commission_percentage)
+            return
+
         self.professors[prof_name] = {"minutes": prof_minutes, "percentage": prof_percentage}
 
         self.prof_name_input.clear()
@@ -211,7 +221,31 @@ class TeacherHourCalculator(QMainWindow):
 
         self.update_professors_table()
         self.calculate_results()
-    
+
+    def calculate_total_commission_percentage(self, professors=None):
+        if professors is None:
+            professors = self.professors
+        total_hours = self.course_hours_input.value()
+
+        if total_hours <= 0:
+            return 0.0
+
+        total_commission_percent = 0.0
+        for data in professors.values():
+            hours = data["minutes"] / 60.0
+            percentage = data["percentage"]
+            total_commission_percent += (hours / total_hours) * percentage
+
+        return total_commission_percent
+
+    def show_commission_limit_alert(self, commission_percentage):
+        QMessageBox.warning(
+            self,
+            "Limite de Comissoes Excedido",
+            f"O valor total das comissoes nao pode passar de {self.COMMISSION_LIMIT_PERCENT:.1f}% do curso.\n"
+            f"Com estes dados, as comissoes chegariam a {commission_percentage:.2f}%."
+        )
+
     def update_professors_table(self):
         self.professors_table.setRowCount(0)
         
@@ -282,6 +316,16 @@ class TeacherHourCalculator(QMainWindow):
                 )
                 return
 
+            candidate_professors = dict(self.professors)
+            if new_name != prof_name:
+                del candidate_professors[prof_name]
+            candidate_professors[new_name] = {"minutes": new_minutes, "percentage": new_percentage}
+            total_commission_percentage = self.calculate_total_commission_percentage(candidate_professors)
+
+            if total_commission_percentage > self.COMMISSION_LIMIT_PERCENT:
+                self.show_commission_limit_alert(total_commission_percentage)
+                return
+
             # Se mudou o nome, remover entrada antiga
             if new_name != prof_name:
                 del self.professors[prof_name]
@@ -340,18 +384,28 @@ class TeacherHourCalculator(QMainWindow):
             # Valor da hora/aula do professor é baseado na sua porcentagem em cima da hora/aula do curso
             prof_hour_value = value_per_hour_total * (percentage / 100.0)
             prof_total_value = hours * prof_hour_value
+            prof_total_percentage = (prof_total_value / total_value) * 100.0
             total_distributed += prof_total_value
 
             result_lines.append(
                 f"<tr><td>&nbsp;<b>{prof_name}:</b></td>"
                 f"<td>&nbsp;{hours_int:02d}:{minutes_int:02d} ({minutes:.0f} min / {hours:.2f}h)</td>"
                 f"<td>&nbsp;({percentage:.1f}% da H/A: R$ {prof_hour_value:.2f}/h)</td>"
+                f"<td>&nbsp;{prof_total_percentage:.2f}% do total do curso</td>"
                 f"<td>&nbsp;→ <b>R$ {prof_total_value:.2f}</b></td></tr>"
             )
         
         result_lines.append("</table>")
+        total_distributed_percentage = (total_distributed / total_value) * 100.0
         result_lines.append(f"<br><b>✅ Total Distribuído aos Professores:</b> R$ {total_distributed:.2f}")
-        
+        result_lines.append(f"<b>Percentual distribuido:</b> {total_distributed_percentage:.2f}% do total do curso")
+
+        if total_distributed_percentage > self.COMMISSION_LIMIT_PERCENT:
+            result_lines.append(
+                f"<br><b>Alerta:</b> O total de comissoes ultrapassa "
+                f"{self.COMMISSION_LIMIT_PERCENT:.1f}% do valor do curso."
+            )
+
         self.result_text.setText("\n".join(result_lines))
     
     def save_data(self):
