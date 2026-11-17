@@ -1,0 +1,19 @@
+{
+  "course_value": 220.0,
+  "course_minutes": 661,
+  "course_hours": 11.016666666666667,
+  "professors": {
+    "Barbara": {
+      "minutes": 240,
+      "percentage": 25.0
+    },
+    "Fabricio": {
+      "minutes": 181,
+      "percentage": 10.0
+    },
+    "Caroline": {
+      "minutes": 240,
+      "percentage": 10.0
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "course_value": 240.0,
+  "course_minutes": 737,
+  "course_hours": 12.283333333333333,
+  "professors": {
+    "Ana": {
+      "minutes": 240,
+      "percentage": 25.0
+    },
+    "Camilo": {
+      "minutes": 240,
+      "percentage": 25.0
+    },
+    "Raquel": {
+      "minutes": 120,
+      "percentage": 25.0
+    },
+    "Bruno Ferreira": {
+      "minutes": 137,
+      "percentage": 10.0
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "course_value": 306.67,
+  "course_minutes": 920,
+  "course_hours": 15.333333333333334,
+  "professors": {
+    "Lourdes": {
+      "minutes": 120,
+      "percentage": 25.0
+    },
+    "Alexandre": {
+      "minutes": 200,
+      "percentage": 0.0
+    },
+    "Danaê": {
+      "minutes": 240,
+      "percentage": 25.0
+    },
+    "Carol": {
+      "minutes": 360,
+      "percentage": 10.0
+    }
+  }
+}

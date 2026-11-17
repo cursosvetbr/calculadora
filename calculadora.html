@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Professores Calculadora Hora Aula</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --input-bg: #0f172a;
+      --border: #334155;
+      --accent: #10b981;
+      --accent-hover: #059669;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 30px 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 540px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      font-size: 1.35rem;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    /* Inputs com Máscaras */
+    .input-wrapper {
+      display: flex;
+      align-items: center;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .input-wrapper:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15);
+    }
+
+    .input-prefix, .input-suffix {
+      padding: 0 12px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      user-select: none;
+      font-weight: 500;
+    }
+
+    .input-wrapper input {
+      border: none;
+      background: transparent;
+      padding: 10px 6px;
+      color: var(--text);
+      font-size: 1rem;
+      outline: none;
+      width: 100%;
+    }
+
+    .input-wrapper input:first-child {
+      padding-left: 12px;
+    }
+
+    .input-wrapper input:last-child {
+      padding-right: 12px;
+    }
+
+    .input-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .input-divider {
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    .helper {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 5px;
+    }
+
+    /* Seção de Valores Discriminados */
+    .discriminated-list {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 20px 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .discriminated-title {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      margin-bottom: 2px;
+    }
+
+    .item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      padding: 2px 0;
+    }
+
+    .item-label {
+      color: var(--text-muted);
+    }
+
+    .item-value {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .item-row.highlight-total {
+      border-top: 1px dashed var(--border);
+      padding-top: 10px;
+      margin-top: 4px;
+    }
+
+    .item-row.highlight-total .item-label {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .item-row.highlight-total .item-value {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* Botão Copiar */
+    .btn {
+      width: 100%;
+      background-color: var(--accent);
+      color: #022c22;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: none;
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background-color: var(--accent-hover);
+      color: #fff;
+    }
+
+    #toast {
+      visibility: hidden;
+      min-width: 220px;
+      background: #10b981;
+      color: #022c22;
+      font-weight: 600;
+      text-align: center;
+      border-radius: 8px;
+      padding: 10px;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.85rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    #toast.show {
+      visibility: visible;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="card">
+      <h1>Professores Calculadora Hora Aula</h1>
+      <p class="subtitle">Informe a hora/aula, duração e porcentagem para ver os valores discriminados.</p>
+
+      <!-- 1. Valor da Hora/Aula -->
+      <div class="form-group">
+        <label for="valorHoraAula">Valor da Hora/Aula Base:</label>
+        <div class="input-wrapper">
+          <span class="input-prefix">R$</span>
+          <input 
+            type="text" 
+            id="valorHoraAula" 
+            placeholder="0,00" 
+            inputmode="numeric" 
+            oninput="aoDigitarMoeda(this)" 
+          />
+          <span class="input-suffix">/ hora</span>
+        </div>
+        <div class="helper">Valor base pago por 1 hora (60 minutos) de aula.</div>
+      </div>
+
+      <!-- 2. Carga Horária / Duração -->
+      <div class="form-group">
+        <label>Duração das Aulas (Conversor HH:MM ↔ Minutos):</label>
+        <div class="input-row">
+          <div class="input-wrapper" style="flex: 1;">
+            <input 
+              type="text" 
+              id="tempoHHMM" 
+              placeholder="00:00" 
+              maxlength="6" 
+              inputmode="numeric" 
+              oninput="aoDigitarHHMM(this)" 
+              onblur="aoSairHHMM(this)" 
+            />
+            <span class="input-suffix">HH:MM</span>
+          </div>
+
+          <span class="input-divider">ou</span>
+
+          <div class="input-wrapper" style="flex: 1;">
+            <input 
+              type="text" 
+              id="tempoMinutos" 
+              placeholder="0" 
+              inputmode="numeric" 
+              oninput="aoDigitarMinutos(this)" 
+            />
+            <span class="input-suffix">min</span>
+          </div>
+        </div>
+        <div class="helper" id="descHorasDecimais">0 minutos = 0,00 horas</div>
+      </div>
+
+      <!-- 3. % do Professor -->
+      <div class="form-group">
+        <label for="pctProfessor">% do Professor sobre a Hora/Aula:</label>
+        <div class="input-wrapper">
+          <input 
+            type="text" 
+            id="pctProfessor" 
+            placeholder="25,00" 
+            value="25,00" 
+            inputmode="decimal" 
+            oninput="aoDigitarPorcentagem(this)" 
+          />
+          <span class="input-suffix">%</span>
+        </div>
+        <div class="helper">Percentual do professor sobre a hora lecionada (padrão: 25,00%).</div>
+      </div>
+
+      <!-- Valores Discriminados -->
+      <div class="discriminated-list">
+        <div class="discriminated-title">Discriminação dos Valores</div>
+
+        <div class="item-row">
+          <span class="item-label">Carga Horária:</span>
+          <span class="item-value" id="discTempo">00:00 (0 min / 0,00h)</span>
+        </div>
+
+        <div class="item-row">
+          <span class="item-label">Valor Hora/Aula Base:</span>
+          <span class="item-value" id="discValorBase">R$ 0,00 /h</span>
+        </div>
+
+        <div class="item-row">
+          <span class="item-label">% do Professor:</span>
+          <span class="item-value" id="discPctProf">25,00%</span>
+        </div>
+
+        <div class="item-row">
+          <span class="item-label">Valor/Hora do Professor:</span>
+          <span class="item-value" id="discValorHoraProf">R$ 0,00 /h</span>
+        </div>
+
+        <div class="item-row">
+          <span class="item-label">Valor Bruto Total (100%):</span>
+          <span class="item-value" id="discValorBruto">R$ 0,00</span>
+        </div>
+
+        <div class="item-row highlight-total">
+          <span class="item-label">Total a Pagar (Repasse):</span>
+          <span class="item-value" id="discTotalRepasse">R$ 0,00</span>
+        </div>
+      </div>
+
+      <!-- Botão Copiar Apenas o Valor -->
+      <button class="btn" onclick="copiarValor()">📋 Copiar Valor</button>
+    </div>
+  </div>
+
+  <div id="toast">Valor copiado: R$ 0,00</div>
+
+  <script>
+    // --- MÁSCARAS E ENTRADAS ---
+
+    // Moeda BRL
+    function aoDigitarMoeda(input) {
+      let v = input.value.replace(/\D/g, '');
+      if (!v) {
+        input.value = '';
+      } else {
+        let num = parseFloat(v) / 100;
+        input.value = num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      }
+      calcular();
+    }
+
+    function obterValorMoeda(input) {
+      let v = input.value.replace(/\D/g, '');
+      return v ? parseFloat(v) / 100 : 0;
+    }
+
+    // Tempo HH:MM
+    function aplicarMascaraHHMM(str) {
+      let v = str.replace(/\D/g, '');
+      if (v.length > 5) v = v.substring(0, 5);
+      if (v.length === 0) return '';
+      if (v.length <= 2) return v;
+      const horas = v.slice(0, -2);
+      const minutos = v.slice(-2);
+      return `${horas}:${minutos}`;
+    }
+
+    function aoDigitarHHMM(input) {
+      input.value = aplicarMascaraHHMM(input.value);
+      const min = parseHHMM(input.value);
+      document.getElementById('tempoMinutos').value = min > 0 ? formatarMilhar(min) : '';
+      atualizarDescTempo(min);
+      calcular();
+    }
+
+    function aoSairHHMM(input) {
+      if (!input.value) return;
+      const min = parseHHMM(input.value);
+      if (min > 0) {
+        input.value = formatHHMM(min);
+      }
+    }
+
+    // Minutos
+    function aoDigitarMinutos(input) {
+      let v = input.value.replace(/\D/g, '');
+      const min = parseInt(v, 10) || 0;
+      input.value = min > 0 ? formatarMilhar(min) : '';
+      document.getElementById('tempoHHMM').value = formatHHMM(min);
+      atualizarDescTempo(min);
+      calcular();
+    }
+
+    function obterMinutos(input) {
+      let v = input.value.replace(/\D/g, '');
+      return parseInt(v, 10) || 0;
+    }
+
+    // Porcentagem
+    function aoDigitarPorcentagem(input) {
+      let v = input.value.replace(/[^\d,]/g, '');
+      const partes = v.split(',');
+      if (partes.length > 2) {
+        v = partes[0] + ',' + partes.slice(1).join('');
+      }
+      if (partes.length === 2 && partes[1].length > 2) {
+        v = partes[0] + ',' + partes[1].substring(0, 2);
+      }
+      input.value = v;
+      calcular();
+    }
+
+    function obterPorcentagem(input) {
+      let v = input.value.replace(',', '.');
+      return parseFloat(v) || 0;
+    }
+
+    // --- UTILITÁRIOS ---
+
+    function parseHHMM(str) {
+      if (!str) return 0;
+      const partes = str.trim().split(':');
+      if (partes.length === 1) {
+        const num = parseInt(partes[0], 10);
+        return isNaN(num) ? 0 : num * 60;
+      }
+      const h = parseInt(partes[0], 10) || 0;
+      const m = parseInt(partes[1], 10) || 0;
+      return (h * 60) + m;
+    }
+
+    function formatHHMM(min) {
+      if (!min || min <= 0) return '';
+      const h = Math.floor(min / 60);
+      const m = Math.round(min % 60);
+      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+    }
+
+    function formatarMilhar(num) {
+      return (num || 0).toLocaleString('pt-BR');
+    }
+
+    function formatarMoeda(val) {
+      return (val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function formatarNum(val, dec = 2) {
+      return (val || 0).toLocaleString('pt-BR', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+    }
+
+    function atualizarDescTempo(minutos) {
+      const horas = minutos / 60;
+      document.getElementById('descHorasDecimais').innerText = 
+        `${formatarMilhar(minutos)} minutos = ${formatarNum(horas, 2)} horas (${formatHHMM(minutos) || '00:00'})`;
+    }
+
+    // --- CÁLCULO PRINCIPAL ---
+
+    function calcular() {
+      const valorHoraAula = obterValorMoeda(document.getElementById('valorHoraAula'));
+      const minutos = obterMinutos(document.getElementById('tempoMinutos'));
+      const pctProf = obterPorcentagem(document.getElementById('pctProfessor'));
+
+      const horasDecimais = minutos > 0 ? (minutos / 60.0) : 0;
+
+      // 1. Valor da hora do professor
+      const valorHoraProf = valorHoraAula * (pctProf / 100.0);
+
+      // 2. Valor total bruto (100%)
+      const valorBrutoTotal = horasDecimais * valorHoraAula;
+
+      // 3. Valor do repasse do professor
+      const totalRepasse = horasDecimais * valorHoraProf;
+
+      // Atualizar Discriminação dos Valores
+      document.getElementById('discTempo').innerText = 
+        `${formatHHMM(minutos) || '00:00'} (${formatarMilhar(minutos)} min / ${formatarNum(horasDecimais, 2)}h)`;
+      document.getElementById('discValorBase').innerText = `${formatarMoeda(valorHoraAula)} /h`;
+      document.getElementById('discPctProf').innerText = `${formatarNum(pctProf, 2)}%`;
+      document.getElementById('discValorHoraProf').innerText = `${formatarMoeda(valorHoraProf)} /h`;
+      document.getElementById('discValorBruto').innerText = formatarMoeda(valorBrutoTotal);
+      document.getElementById('discTotalRepasse').innerText = formatarMoeda(totalRepasse);
+    }
+
+    // --- COPIAR APENAS O VALOR ---
+
+    function copiarValor() {
+      const valorHoraAula = obterValorMoeda(document.getElementById('valorHoraAula'));
+      const minutos = obterMinutos(document.getElementById('tempoMinutos'));
+      const pctProf = obterPorcentagem(document.getElementById('pctProfessor'));
+
+      const horasDecimais = minutos > 0 ? (minutos / 60.0) : 0;
+      const valorHoraProf = valorHoraAula * (pctProf / 100.0);
+      const totalRepasse = horasDecimais * valorHoraProf;
+
+      const texto = formatarMoeda(totalRepasse);
+
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(texto).then(() => mostrarToast(texto));
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = texto;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        mostrarToast(texto);
+      }
+    }
+
+    function mostrarToast(valor) {
+      const toast = document.getElementById('toast');
+      toast.innerText = `Valor copiado: ${valor}`;
+      toast.className = 'show';
+      setTimeout(() => { toast.className = ''; }, 2500);
+    }
+  </script>
+</body>
+</html>
